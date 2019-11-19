@@ -121,7 +121,8 @@
                             <div class="th-wrap">
                                 <template v-if="column.searchable">
                                     <b-input
-                                        v-model="filters[column.field]"
+                                        :value="filters[column.field]"
+                                        @input="timeoutInput($event, column.field)"
                                         :type="column.numeric ? 'number' : 'text'" />
                                 </template>
                             </div>
@@ -416,7 +417,8 @@ export default {
         ariaNextLabel: String,
         ariaPreviousLabel: String,
         ariaPageLabel: String,
-        ariaCurrentLabel: String
+        ariaCurrentLabel: String,
+        backendSearching: Boolean
     },
     data() {
         return {
@@ -432,7 +434,8 @@ export default {
             isAsc: true,
             filters: {},
             firstTimeSort: true, // Used by first time initSort
-            _isTable: true // Used by TableColumn
+            _isTable: true, // Used by TableColumn
+            timeout: null
         }
     },
     computed: {
@@ -590,8 +593,12 @@ export default {
 
         filters: {
             handler(value) {
-                this.newData = this.data.filter(
-                    (row) => this.isRowFiltered(row))
+                if (this.backendSearching) {
+                    this.$emit('search', value)
+                } else {
+                    this.newData = this.data.filter(
+                        (row) => this.isRowFiltered(row))
+                }
                 if (!this.backendPagination) {
                     this.newDataTotal = this.newData.length
                 }
@@ -983,6 +990,12 @@ export default {
         */
         handleDragLeave(event, row, index) {
             this.$emit('dragleave', {event, row, index})
+        },
+        timeoutInput(value, field) {
+            clearTimeout(this.timeout)
+            this.timeout = setTimeout(() => {
+                this.$set(this.filters, field, value)
+            }, 500)
         }
     },
 
