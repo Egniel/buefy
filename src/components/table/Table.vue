@@ -418,7 +418,11 @@ export default {
         ariaPreviousLabel: String,
         ariaPageLabel: String,
         ariaCurrentLabel: String,
-        backendSearching: Boolean
+        backendSearching: Boolean,
+        timeoutTime: {
+            type: Number,
+            default: 500,
+        }
     },
     data() {
         return {
@@ -995,7 +999,7 @@ export default {
             clearTimeout(this.timeout)
             this.timeout = setTimeout(() => {
                 this.$set(this.filters, field, value)
-            }, 500)
+            }, this.timeoutTime)
         }
     },
 
