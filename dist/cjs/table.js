@@ -337,7 +337,11 @@ var script$2 = {
     ariaPreviousLabel: String,
     ariaPageLabel: String,
     ariaCurrentLabel: String,
-    backendSearching: Boolean
+    backendSearching: Boolean,
+    timeoutTime: {
+      type: Number,
+      default: 500
+    }
   },
   data: function data() {
     return {
@@ -915,7 +919,7 @@ var script$2 = {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function () {
         _this8.$set(_this8.filters, field, value);
-      }, 500);
+      }, this.timeoutTime);
     }
   },
   mounted: function mounted() {
